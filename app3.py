@@ -2,18 +2,24 @@ import streamlit as st
 import pandas as pd
 import joblib
 
-# ---------- Load artifacts ----------
-model = joblib.load("diabetes_model.joblib")
+# ==============================
+# Load model artifacts
+# ==============================
 model_bal = joblib.load("diabetes_model_balanced.joblib")
 scaler = joblib.load("scaler.joblib")
 features = joblib.load("features.joblib")
 
+# ==============================
+# Page config
+# ==============================
 st.set_page_config(
     page_title="Diabetes Risk Screening Tool",
     layout="centered"
 )
 
-# ---------- Header ----------
+# ==============================
+# Header
+# ==============================
 st.markdown("## 🩺 Diabetes Risk Screening Tool")
 st.write(
     "This tool estimates the risk of diabetes based on common health and lifestyle factors."
@@ -24,7 +30,9 @@ st.warning(
 
 st.markdown("---")
 
-# ---------- Patient information ----------
+# ==============================
+# Patient information
+# ==============================
 st.markdown("### Patient information")
 
 age = st.number_input("Age (years)", min_value=0, max_value=120, value=23)
@@ -41,9 +49,9 @@ salt = st.selectbox("High salt intake", ["No", "Yes"])
 bmi = st.number_input("BMI", min_value=10.0, max_value=60.0, value=19.0)
 waist = st.number_input("Waist circumference (cm)", min_value=40, max_value=200, value=60)
 
-obesity = st.selectbox("Obesity", ["No", "Yes"])
-
-# ---------- Encode inputs ----------
+# ==============================
+# Encode inputs (NO Obesity)
+# ==============================
 input_dict = {
     "Age": age,
     "Sex": 1 if sex == "Male" else 0,
@@ -55,16 +63,20 @@ input_dict = {
     "Physical_inactivity": 1 if physical_inactivity == "Yes" else 0,
     "High_salt_intake": 1 if salt == "Yes" else 0,
     "BMI": bmi,
-    "Waist_circumference": waist,
-    "Obesity": 1 if obesity == "Yes" else 0
+    "Waist_circumference": waist
 }
 
-# keep only model features
-X = pd.DataFrame([{f: input_dict[f] for f in features}])
-X_scaled = scaler.transform(X)
+# ==============================
+# Prepare model input (SAFE)
+# ==============================
+X = pd.DataFrame(columns=features)
+X.loc[0] = [input_dict[f] for f in features]
 
-# ---------- Prediction ----------
+# ==============================
+# Prediction
+# ==============================
 if st.button("Predict risk"):
+    X_scaled = scaler.transform(X)
     prob = model_bal.predict_proba(X_scaled)[0][1]
 
     st.markdown("### Result")
@@ -77,7 +89,9 @@ if st.button("Predict risk"):
     else:
         st.error("❗ High risk of diabetes (screen-positive)")
 
-# ---------- Footer ----------
+# ==============================
+# Footer
+# ==============================
 st.markdown(
     "<hr><div style='text-align:center; color:gray; font-size:12px;'>"
     "Created by SanimgulSS</div>",
