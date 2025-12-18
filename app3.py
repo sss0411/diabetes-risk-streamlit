@@ -46,6 +46,8 @@ if st.button("Predict risk"):
     else:
         st.success("Low risk of diabetes")
 st.markdown(
-    "<hr><center>Created by SanimgulSS</center>",
+    "<div style='text-align:center; color:gray; font-size:12px;'>"
+    "Created by SanimgulSS</div>",
     unsafe_allow_html=True
 )
+
