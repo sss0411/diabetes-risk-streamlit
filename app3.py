@@ -45,3 +45,7 @@ if st.button("Predict risk"):
         st.error("High risk of diabetes")
     else:
         st.success("Low risk of diabetes")
+st.markdown(
+    "<hr><center>Created by SanimgulSS</center>",
+    unsafe_allow_html=True
+)
